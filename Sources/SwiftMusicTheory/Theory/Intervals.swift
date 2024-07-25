@@ -1,4 +1,4 @@
-public enum Interval: Sendable {
+public enum Interval: Sendable, Hashable {
   case perfect(Perfect, Perfect.Quality, octaves: Int = 0)
   case imperfect(Imperfect, Imperfect.Quality, octaves: Int = 0)
 }
@@ -28,8 +28,8 @@ extension Interval {
 
   public typealias Number = Int
 
-  public enum Imperfect: Number, Sendable, Equatable {
-    public enum Quality: Equatable, Sendable {
+  public enum Imperfect: Number, Sendable, Hashable, Equatable {
+    public enum Quality: Sendable, Hashable, Equatable {
       case major
       case minor
       case diminished(times: Int = 1)
@@ -42,8 +42,8 @@ extension Interval {
     case seventh = 7
   }
 
-  public enum Perfect: Number, Sendable, Equatable {
-    public enum Quality: Equatable, Sendable {
+  public enum Perfect: Number, Sendable, Hashable, Equatable {
+    public enum Quality: Sendable, Hashable, Equatable {
       case perfect
       case diminished(times: Int = 1)
       case augmented(times: Int = 1)
@@ -72,7 +72,7 @@ extension Interval {
     }
   }
 
-  public var intervalIndex: Int {
+  public var diatonicIndex: Int {
     switch self {
     case .perfect(let interval, _, _): 
       interval.rawValue + octaves * Imperfect.seventh.rawValue
@@ -81,8 +81,8 @@ extension Interval {
     }
   }
 
-  public var diatonicNumber: Int {
-    (intervalIndex - 1) % Imperfect.seventh.rawValue + 1
+  public var diatonicIndexNormilized: Int {
+    (diatonicIndex - 1) % Imperfect.seventh.rawValue + 1
   }
 
   public var octaves: Int {
@@ -173,29 +173,29 @@ extension Interval.Imperfect.Quality {
 
 extension Interval: AdditiveArithmetic {
 
-  public init(intervalIndex: Interval.Number, semitones: Int) {
-    let octaves = (intervalIndex <= 8) ? 0 : (intervalIndex / Interval.octave().intervalIndex)
-    let intervalIndex = intervalIndex - Imperfect.seventh.rawValue * octaves
+  public init(diatonicIndex: Interval.Number, semitones: Int) {
+    let octaves = (diatonicIndex <= 8) ? 0 : (diatonicIndex / Interval.octave().diatonicIndex)
+    let diatonicIndex = diatonicIndex - Imperfect.seventh.rawValue * octaves
     let semitonesCount = semitones - octaves * Interval.octave().semitonesCount()
 
-    if let interval = Perfect(rawValue: intervalIndex) {
+    if let interval = Perfect(rawValue: diatonicIndex) {
       self = .perfect(interval, Perfect.Quality(semitonesCount - interval.baseSemitonesCount), octaves: octaves)
     } else {
-      let interval = Imperfect(rawValue: intervalIndex)!
+      let interval = Imperfect(rawValue: diatonicIndex)!
       self = .imperfect(interval, Imperfect.Quality(semitonesCount - interval.baseSemitonesCount), octaves: octaves)
     }
   }
 
   public static func - (lhs: Interval, rhs: Interval) -> Interval {
     Interval(
-      intervalIndex: abs(lhs.intervalIndex - rhs.intervalIndex) + 1,
+      diatonicIndex: abs(lhs.diatonicIndex - rhs.diatonicIndex) + 1,
       semitones: abs(lhs.semitonesCount(includingOctaves: true) - rhs.semitonesCount(includingOctaves: true))
     )
   }
 
   public static func + (lhs: Interval, rhs: Interval) -> Interval {
     Interval(
-      intervalIndex: lhs.intervalIndex + rhs.intervalIndex - 1,
+      diatonicIndex: lhs.diatonicIndex + rhs.diatonicIndex - 1,
       semitones: lhs.semitonesCount(includingOctaves: true) + rhs.semitonesCount(includingOctaves: true)
     )
   }
@@ -209,6 +209,6 @@ extension Interval: Equatable {
   public static func == (lhs: Interval, rhs: Interval) -> Bool {
     // We take module here because we suppose that diminished unison == augmented unison as intervals count from the bottom note
     abs(lhs.semitonesCount(includingOctaves: true)) == abs(rhs.semitonesCount(includingOctaves: true)) &&
-    lhs.diatonicNumber == rhs.diatonicNumber
+    lhs.diatonicIndexNormilized == rhs.diatonicIndexNormilized
   }
 }

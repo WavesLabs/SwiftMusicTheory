@@ -1,10 +1,10 @@
 import CoreFoundation
 
-public struct Pitch {
+public struct Pitch: Sendable {
 
   public let note: Note
   public fileprivate(set) var octave: Octave
-  public var cents: Int
+  public let cents: Int
 
   public init(
     note: Note,
@@ -15,10 +15,6 @@ public struct Pitch {
     self.octave = octave
     self.cents = cents
   }
-
-  public func transposed(by interval: Interval) -> Pitch {
-    fatalError()
-  }
 }
 
 extension Pitch: Hashable { }
@@ -28,7 +24,12 @@ extension Pitch {
     String(note.notation) + String(octave.rawValue)
   }
 
-  public static let distanceReduction: CGFloat = pow(2, -(1.0 / 12))
+  public static let distanceReduction: CGFloat = pow(2, -(1.0 / Double(Interval.octave().semitonesCount())))
+
+  // TODO: Implement me
+//  public func transposed(by interval: Interval) -> Pitch {
+//
+//  }
 }
 
 public extension Note {

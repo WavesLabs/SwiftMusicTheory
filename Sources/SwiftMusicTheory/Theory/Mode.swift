@@ -6,9 +6,10 @@ public struct Mode: Sendable {
   public let notes: [Note]
   public let root: Note
   public let name: String
+  public let chords: [Chord?]
 
-  public var parallelModes: [Mode] { 
-    scale.degreesIndecies.map(parallelMode)
+  public var parallelModes: [Mode] {
+    scale.degrees.indices.map(parallelMode)
   }
   
   public var relativeModes: [Mode] {
@@ -22,23 +23,27 @@ public struct Mode: Sendable {
     self.scale = scale
     self.root = root
 
-    self.notes = scale.formulaFromRoot.map { intervalFromRoot in root + intervalFromRoot }
-    self.name = scale.modes.first ?? ""
+    self.notes = scale.degrees.map { degree in root + degree.intervalFromRoot }
+    self.name = scale.degrees.first?.modeTitle ?? ""
+    self.chords = notes.enumerated().map { noteIndex, note in
+      guard let triad = scale.degrees[noteIndex].triad else { return nil }
+      return Chord(triad: triad, root: note)
+    }
   }
 
   public func parallelMode(at scaleDegree: Int) -> Mode {
-    Mode(root: root, scale: scale.mode(at: scaleDegree))
+    Mode(root: root, scale: scale.shifted(at: scaleDegree))
   }
 
   public func relativeMode(at scaleDegree: Int) -> Mode {
-    Mode(root: notes[scaleDegree - 1], scale: scale.mode(at: scaleDegree))
+    Mode(root: notes[scaleDegree - 1], scale: scale.shifted(at: scaleDegree - 1))
   }
 
   public func relativeMode(at note: Note) -> Mode? {
     guard
       let noteIndex = notes.firstIndex(of: note)
     else {
-      Logger.default.error("There is no \(note) in \(self)")
+      logWarning("There is no \(note) in \(self)")
       return nil
     }
 
@@ -47,16 +52,11 @@ public struct Mode: Sendable {
 
   public func degree(under note: Note) -> Scale.Degree? {
     guard let noteIndex = notes.firstIndex(of: note) else {
-      Logger.default.error("There is no \(note) in \(self)")
+      logWarning("There is no \(note) in \(self)")
       return nil
     }
 
-    return scale.degrees()[noteIndex]
-  }
-
-  // TODO: Refactor this! Index of the degree may not be laid out with diatonic number!!
-  public func triad(on degree: Scale.Degree) -> Triad? {
-    scale.formula.triad(for: degree.number.rawValue - 1)
+    return scale.degrees[noteIndex]
   }
 }
 

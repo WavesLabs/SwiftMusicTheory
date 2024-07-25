@@ -5,7 +5,7 @@ import Foundation
 final class ArrayExtensionsTests {
 
   @Test func ArrayShifted() throws {
-    var array = [0, 1, 2, 3, 4]
+    let array = [0, 1, 2, 3, 4]
     var result = array.shifted(by: 1, in: .right)
     #expect(result == [4, 0, 1, 2, 3])
 

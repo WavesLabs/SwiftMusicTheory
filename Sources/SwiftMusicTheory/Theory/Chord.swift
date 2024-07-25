@@ -1,4 +1,4 @@
-public struct Chord: Sendable {
+public struct Chord: Sendable, Equatable {
   public let triad: Triad
   public let root: Note
 
@@ -10,5 +10,12 @@ public struct Chord: Sendable {
     self.triad = triad
     self.root = root
     self.inversion = inversion
+  }
+}
+
+extension Chord: CustomStringConvertible {
+  
+  public var description: String {
+    "\(root)\(triad.title)"
   }
 }

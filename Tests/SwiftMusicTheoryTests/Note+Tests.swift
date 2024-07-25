@@ -49,4 +49,13 @@ final class NoteTests {
     let semitonesCount = cMajorDiatonic.semitonesCount()
     #expect(semitonesCount == testCase.1)
   }
+
+  @Test func notations() {
+    let c: Note = .c
+    let dFlat: Note = .d.flat()
+
+    #expect("\(c.sharp().sharp())" == "C♯♯")
+    #expect("\(dFlat)" == "D♭")
+    #expect("\(dFlat.sharp())" == "D")
+  }
 }

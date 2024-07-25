@@ -1,0 +1,32 @@
+# OS X
+.DS_Store
+
+# Xcode
+/*.xcodeproj
+/*.xcworkspace
+build/
+*.pbxuser
+xcuserdata/
+*.xccheckout
+DerivedData
+*.ipa
+
+# Bundler
+.bundle
+
+# AppCode
+.idea
+!.idea/codeStyleSettings.xml
+
+# Tuist
+graph.png
+Tuist/Dependencies/graph.json
+
+# Logs
+Build-Phases/temp/
+
+# SPM
+**/.build
+.swiftpm/
+
+*__Snapshots__*

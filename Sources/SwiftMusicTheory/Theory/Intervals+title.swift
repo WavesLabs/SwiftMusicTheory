@@ -8,7 +8,7 @@ extension Interval {
   }
 
   public var shortTitle: String {
-    quality.shortTitle + String(intervalIndex)
+    quality.shortTitle + String(diatonicIndex)
   }
 
   private var name: String {
@@ -124,7 +124,7 @@ fileprivate extension Int {
     case 3:
       return "Triple "
     default:
-      Logger.default.warning("Are tou sure you using \(self) times diminished or augmented interval?")
+      logWarning("Are tou sure you using \(self) times diminished or augmented interval?")
       return "\(self) times "
     }
   }

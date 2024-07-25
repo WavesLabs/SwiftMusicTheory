@@ -138,31 +138,18 @@ final class IntervalsTests {
     )
   }
 
-  @Test func IntervalsInit() {
-    #expect(
-      Interval(intervalIndex: 17, semitones: 28) == .third(.major).octaves(2)
-    )
-    #expect(
-      Interval(intervalIndex: 16, semitones: 26) == .second(.major).octaves(2)
-    )
-    #expect(
-      Interval(intervalIndex: 1, semitones: 0) == .unison()
-    )
-    #expect(
-      Interval(intervalIndex: 1, semitones: 12) == .octave()
-    )
-    #expect(
-      Interval(intervalIndex: 8, semitones: 0) == .unison()
-    )
-    #expect(
-      Interval(intervalIndex: 7, semitones: 12) == .seventh(.augmented())
-    )
-    #expect(
-      Interval(intervalIndex: 8, semitones: 12) == .octave()
-    )
-    #expect(
-      Interval(intervalIndex: 9, semitones: 15) == .second(.augmented()).octaves(1)
-    )
+  @Test func intervalsInit() {
+    print(Interval(diatonicIndex: 2, semitones: 2)) // Prints "major second"
+    #expect(Interval(diatonicIndex: 2, semitones: 1) == .second(.minor))
+    #expect(Interval(diatonicIndex: 2, semitones: 2) == .second(.major))
+    #expect(Interval(diatonicIndex: 17, semitones: 28) == .third(.major).octaves(2))
+    #expect(Interval(diatonicIndex: 16, semitones: 26) == .second(.major).octaves(2))
+    #expect(Interval(diatonicIndex: 1, semitones: 0) == .unison())
+    #expect(Interval(diatonicIndex: 1, semitones: 12) == .octave())
+    #expect(Interval(diatonicIndex: 8, semitones: 0) == .unison())
+    #expect(Interval(diatonicIndex: 7, semitones: 12) == .seventh(.augmented()))
+    #expect(Interval(diatonicIndex: 8, semitones: 12) == .octave())
+    #expect(Interval(diatonicIndex: 9, semitones: 15) == .second(.augmented()).octaves(1))
   }
 
   @Test func AugmentedAndDiminished() {
@@ -193,15 +180,13 @@ final class IntervalsTests {
     #expect(
       .second(.augmented()) + .third(.minor) == .fourth(.augmented())
     )
-    #expect(
-      .second(.major) + .third(.major) == .fourth(.augmented())
-    )
+    #expect(.second(.major) + .third(.major) == .fourth(.augmented()))
     #expect(
       .unison(.augmented()) + .octave() == .octave(.augmented())
     )
   }
 
-  @Test func Equasions() {
+  @Test func equasions() {
     #expect(Interval.second(.major) != .third(.diminished()))
     #expect(Interval.fourth(.augmented()) != .fifth(.diminished()))
 
@@ -217,13 +202,13 @@ final class IntervalsTests {
     )
   }
 
-  @Test func FifthsSum() {
+  @Test func fifthsSum() {
     #expect(
       .fifth() + .unison() == .fifth()
     )
   }
 
-  @Test func CornerCases() {
+  @Test func cornerCases() {
     // C# -> Dbb, Dbb -> C#
     #expect(
       Interval.second(.diminished(times: 2)).inverted == .seventh(.augmented(times: 2))
@@ -245,28 +230,14 @@ final class IntervalsTests {
     )
   }
 
-  @Test func Inversions() {
-    #expect(
-      Interval.unison().inverted == Interval.octave()
-    )
-    #expect(
-      Interval.second(.major).inverted == Interval.seventh(.minor)
-    )
-    #expect(
-      Interval.second(.augmented()).inverted == Interval.seventh(.diminished())
-    )
-    #expect(
-      Interval.fifth(.augmented()).inverted == Interval.fourth(.diminished())
-    )
-    #expect(
-      Interval.fifth(.augmented()) == Interval.fourth(.diminished()).inverted
-    )
-    #expect(
-      Interval.octave(.diminished()).inverted == Interval.unison(.augmented())
-    )
-    #expect(
-      Interval.octave(.diminished()).inverted == Interval.unison(.augmented())
-    )
+  @Test func inversions() {
+    #expect(.unison().inverted == .octave())
+    #expect(.second(.major).inverted == .seventh(.minor))
+    #expect(.second(.augmented()).inverted == .seventh(.diminished()))
+    #expect(.fifth(.augmented()).inverted == .fourth(.diminished()))
+    #expect(.fourth(.diminished()).inverted == .fifth(.augmented()))
+    #expect(.octave(.diminished()).inverted == .unison(.augmented()))
+    #expect(.octave(.diminished()).inverted == .unison(.augmented()))
   }
 
   @Test func IntervalsDifference() {

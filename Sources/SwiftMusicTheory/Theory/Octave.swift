@@ -1,4 +1,4 @@
-public enum Octave: Int, CaseIterable {
+public enum Octave: Int, CaseIterable, Sendable {
   case subcontra = 0
   case contra = 1
   case great
