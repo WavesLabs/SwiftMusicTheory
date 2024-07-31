@@ -4,7 +4,7 @@ public extension Scale.Formula {
     Scale.Formula.Step(.second(.major), "Dorian"),
     Scale.Formula.Step(.second(.minor), "Phrygian"),
     Scale.Formula.Step(.second(.major), "Lydian"),
-    Scale.Formula.Step(.second(.major), "Mixolydian"),
+    Scale.Formula.Step(.second(.major), "Mixolyd", modeNames: ["Mixolydian"]),
     Scale.Formula.Step(.second(.major), "Minor"),
     Scale.Formula.Step(.second(.minor), "Locrian")
   ])

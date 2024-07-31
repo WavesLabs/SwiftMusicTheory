@@ -5,7 +5,8 @@ public struct Mode: Sendable {
   public let scale: Scale
   public let notes: [Note]
   public let root: Note
-  public let name: String
+  public let names: [String]
+  public let shortName: String
   public let chords: [Chord?]
 
   public var parallelModes: [Mode] {
@@ -24,7 +25,8 @@ public struct Mode: Sendable {
     self.root = root
 
     self.notes = scale.degrees.map { degree in root + degree.intervalFromRoot }
-    self.name = scale.degrees.first?.modeTitle ?? ""
+    self.shortName = scale.degrees.first?.shortName ?? ""
+    self.names = scale.degrees.first?.modeNames ?? []
     self.chords = notes.enumerated().map { noteIndex, note in
       guard let triad = scale.degrees[noteIndex].triad else { return nil }
       return Chord(triad: triad, root: note)
@@ -66,11 +68,11 @@ extension Mode: CustomStringConvertible {
   }
 
   public var title: String {
-    "\(root) \(name)"
+    "\(root) \(shortName)"
   }
 }
 
-extension Mode: Equatable { }
+extension Mode: Equatable, Hashable { }
 
 extension Mode {
   public func at(root note: Note) -> Mode {

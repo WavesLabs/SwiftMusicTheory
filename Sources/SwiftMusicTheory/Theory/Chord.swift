@@ -1,4 +1,4 @@
-public struct Chord: Sendable, Equatable {
+public struct Chord: Sendable, Equatable, Hashable {
   public let triad: Triad
   public let root: Note
 

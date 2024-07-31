@@ -32,4 +32,4 @@ public enum Triad: Sendable, CaseIterable {
   }
 }
 
-extension Triad: Equatable { }
+extension Triad: Equatable, Hashable { }

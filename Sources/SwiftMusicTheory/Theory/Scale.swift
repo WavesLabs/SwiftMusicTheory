@@ -1,15 +1,17 @@
 import os
 
 public extension Scale {
-  struct Formula: Sendable {
-    public struct Step: Sendable, Equatable {
-      public init(_ interval: Interval, _ modeTitle: String) {
+  struct Formula: Sendable, Hashable {
+    public struct Step: Sendable, Equatable, Hashable {
+      public init(_ interval: Interval, _ shortName: String, modeNames: [String] = []) {
         self.interval = interval
-        self.modeTitle = modeTitle
+        self.shortName = shortName
+        self.modeNames = modeNames
       }
       
       fileprivate let interval: Interval
-      fileprivate let modeTitle: String
+      fileprivate let shortName: String
+      fileprivate let modeNames: [String]
     }
     
     fileprivate let steps: [Step]
@@ -35,14 +37,26 @@ public extension Scale {
 }
 
 public struct Scale: Sendable {
+  
+  public enum `Type`: Int, Sendable, Hashable {
+    case pentatonic = 5
+    case hexatonic = 6
+    case heptatonic = 7
+    case octotonic = 8
+    case chromatic = 12
+    case unknown = 0
+  }
 
-  public struct Degree: Sendable {
+  public struct Degree: Sendable, Hashable {
     
     /// Function of the degree relative to the diatonic
     public let function: Function
     
-    /// Title of the mode, that can be build on the current degree
-    public let modeTitle: String
+    /// Short title of the mode, that can be build on the current degree
+    public let shortName: String
+    
+    /// Titles of the mode
+    public let modeNames: [String]
     
     /// Interval of the degree relative to the tonic of the scale
     public let intervalFromRoot: Interval
@@ -54,6 +68,7 @@ public struct Scale: Sendable {
   public let name: String
   public let degrees: [Degree]
   public let intervals: [Interval]
+  public let type: `Type`
   fileprivate let formula: Formula
   
   public var triads: [Triad?] { degrees.map(\.triad) }
@@ -70,7 +85,8 @@ public struct Scale: Sendable {
         let intervalFromRoot = formula.intervalsFromRoot[index]
         return Degree(
           function: Formula.diatonic.chromaticFunction(at: intervalFromRoot)!,
-          modeTitle: step.modeTitle,
+          shortName: step.shortName,
+          modeNames: step.modeNames,
           intervalFromRoot: intervalFromRoot,
           triad: intervals.triad(for: index)
         )
@@ -78,6 +94,7 @@ public struct Scale: Sendable {
     
     self.degrees = degrees
     self.intervals = intervals
+    self.type = `Type`(rawValue: degrees.count) ?? .unknown
   }
 }
 
@@ -131,7 +148,7 @@ public extension Scale {
   }
 }
 
-extension Scale: Equatable {
+extension Scale: Equatable, Hashable {
   public static func == (lhs: Scale, rhs: Scale) -> Bool {
     lhs.formula.steps == rhs.formula.steps
   }
