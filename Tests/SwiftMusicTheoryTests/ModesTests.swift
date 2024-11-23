@@ -7,15 +7,13 @@ final class ModesTests {
   @Test func diatonic() {
     let cMajor = Mode(root: .c, scale: .diatonic)
 
-    print(cMajor.relativeMode(at: 6))
-
     #expect(cMajor.root == .c)
     #expect(cMajor.notes == [.c, .d, .e, .f, .g, .a, .b])
-    #expect(cMajor.name == "Major")
+    #expect(cMajor.names.contains("Major"))
     #expect(cMajor.title == "C Major")
     #expect(cMajor.scale.name == "Diatonic")
     #expect(cMajor.parallelMode(at: 5).notes == [.c, .d, .e.flat(), .f, .g, .a.flat(), .b.flat()])
-    #expect(cMajor.parallelMode(at: 5).name == "Minor")
+    #expect(cMajor.parallelMode(at: 5).names.contains("Minor"))
     #expect(cMajor.parallelMode(at: 5).scale.name == "Diatonic")
 
     #expect(cMajor.relativeMode(at: .a)?.notes == [.a, .b, .c, .d, .e, .f, .g])

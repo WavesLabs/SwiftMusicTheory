@@ -7,25 +7,25 @@ struct DiatonicTests {
   let diatonic = Scale.diatonic
 
   @Test func triads() {
-    #expect(diatonic.triads == [.major, .minor, .minor, .major, .major, .minor, .diminished])
-    #expect(diatonic.shifted(at: 7).triads == [.major, .minor, .minor, .major, .major, .minor, .diminished])
+    #expect(diatonic.degrees.flatMap { $0.triads } == [.major, .minor, .minor, .major, .major, .minor, .diminished])
+    #expect(diatonic.shifted(at: 7).degrees.flatMap { $0.triads } == [.major, .minor, .minor, .major, .major, .minor, .diminished])
 
-    #expect(diatonic.shifted(at: 5).triads == [.minor, .diminished, .major, .minor, .minor, .major, .major])
+    #expect(diatonic.shifted(at: 5).degrees.flatMap { $0.triads } == [.minor, .diminished, .major, .minor, .minor, .major, .major])
   }
 
   @Test func modesFormulas() {
     #expect(
-      diatonic.shifted(at: 3).intervals ==
+      diatonic.shifted(at: 3).degrees.map(\.intervalFromPrevious) ==
       [.second(.major), .second(.major), .second(.major), .second(.minor), .second(.major), .second(.major), .second(.minor)]
     )
 
     #expect(
-      diatonic.intervals ==
+      diatonic.degrees.map(\.intervalFromPrevious) ==
       [.second(.major), .second(.major), .second(.minor), .second(.major), .second(.major), .second(.major), .second(.minor)]
     )
 
     #expect(
-      diatonic.shifted(at: 5).intervals ==
+      diatonic.shifted(at: 5).degrees.map(\.intervalFromPrevious) ==
       [.second(.major), .second(.minor), .second(.major), .second(.major), .second(.minor), .second(.major), .second(.major)]
     )
   }

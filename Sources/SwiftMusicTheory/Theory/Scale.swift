@@ -6,7 +6,7 @@ public extension Scale {
       public init(_ interval: Interval, _ shortName: String, modeNames: [String] = []) {
         self.interval = interval
         self.shortName = shortName
-        self.modeNames = modeNames
+        self.modeNames = modeNames.isEmpty ? [shortName] : modeNames
       }
       
       fileprivate let interval: Interval
@@ -61,17 +61,18 @@ public struct Scale: Sendable {
     /// Interval of the degree relative to the tonic of the scale
     public let intervalFromRoot: Interval
     
-    /// Triad placed on the current scale degree
-    public let triad: Triad?
+    /// Interval of the degree relative to the tonic of the scale
+    public let intervalFromPrevious: Interval
+    
+    /// Triads placed on the current scale degree
+    public let triads: [Triad]
   }
 
   public let name: String
   public let degrees: [Degree]
-  public let intervals: [Interval]
   public let type: `Type`
   fileprivate let formula: Formula
   
-  public var triads: [Triad?] { degrees.map(\.triad) }
   public var functions: [Function] { degrees.map(\.function) }
 
   public init(name: String, formula: Formula) {
@@ -88,12 +89,12 @@ public struct Scale: Sendable {
           shortName: step.shortName,
           modeNames: step.modeNames,
           intervalFromRoot: intervalFromRoot,
-          triad: intervals.triad(for: index)
+          intervalFromPrevious: step.interval,
+          triads: intervals.triads(at: index)
         )
       }
     
     self.degrees = degrees
-    self.intervals = intervals
     self.type = `Type`(rawValue: degrees.count) ?? .unknown
   }
 }
@@ -159,13 +160,13 @@ fileprivate extension Array where Element == Interval {
     reduce(into: .unison(.perfect), { $0 += $1 }) == .octave(.perfect)
   }
 
-  func triad(for degree: Int) -> Triad? {
+  func triads(at degree: Int) -> [Triad] {
     let intervals = (
-      self[cycled: degree] + self[cycled: degree + 1],
-      self[cycled: degree + 2] + self[cycled: degree + 3]
+      self[cycled: degree].semitonesCount() + self[cycled: degree + 1].semitonesCount(),
+      self[cycled: degree + 2].semitonesCount() + self[cycled: degree + 3].semitonesCount()
     )
 
-    return Triad.allCases.first {
+    return Triad.allCases.filter {
       $0.formula == intervals
     }
   }
@@ -179,7 +180,7 @@ fileprivate extension Scale.Formula {
       return nil
     }
 
-    let semitonesDiff = interval.octaveAsRootSemitones - relativeInterval.semitonesCount()
+    let semitonesDiff = interval.octaveAsRootSemitonesCount - relativeInterval.semitonesCount()
     return Scale.Function(
       diatonicIndexNormilized: relativeInterval.diatonicIndexNormilized,
       accidental: Accidental(semitonesDiff)
@@ -190,7 +191,7 @@ fileprivate extension Scale.Formula {
 fileprivate extension Interval {
 
   // To make sure the octave degree is considered as the root
-  var octaveAsRootSemitones: Int {
+  var octaveAsRootSemitonesCount: Int {
     if case .perfect(let perfect, _, _) = self, case .octave = perfect {
       return semitonesCount() - Interval.octave().semitonesCount()
     } else {
@@ -261,7 +262,7 @@ extension Scale.Function: CustomStringConvertible {
 extension Scale.Degree {
   public var functionTitle: String {
     var result = function.romanicNotation
-    switch triad {
+    switch triads.first {
     case .augmented:
       result += "+"
       fallthrough

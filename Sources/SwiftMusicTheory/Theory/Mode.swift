@@ -7,7 +7,7 @@ public struct Mode: Sendable {
   public let root: Note
   public let names: [String]
   public let shortName: String
-  public let chords: [Chord?]
+  public let chords: [Chord]
 
   public var parallelModes: [Mode] {
     scale.degrees.indices.map(parallelMode)
@@ -27,9 +27,9 @@ public struct Mode: Sendable {
     self.notes = scale.degrees.map { degree in root + degree.intervalFromRoot }
     self.shortName = scale.degrees.first?.shortName ?? ""
     self.names = scale.degrees.first?.modeNames ?? []
-    self.chords = notes.enumerated().map { noteIndex, note in
-      guard let triad = scale.degrees[noteIndex].triad else { return nil }
-      return Chord(triad: triad, root: note)
+    self.chords = notes.enumerated().flatMap { noteIndex, note in
+      let triads = scale.degrees[noteIndex].triads
+      return triads.map { Chord(triad: $0, root: note) }
     }
   }
 

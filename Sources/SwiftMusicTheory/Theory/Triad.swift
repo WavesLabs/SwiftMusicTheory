@@ -4,12 +4,14 @@ public enum Triad: Sendable, CaseIterable {
   case diminished
   case augmented
 
-  public var formula: (Interval, Interval) {
+  public var formula: (Int, Int) {
+    let majorThird = Interval.third(.major).semitonesCount()
+    let minorThird = Interval.third(.minor).semitonesCount()
     switch self {
-    case .minor: return (.third(.minor), .third(.major))
-    case .major: return (.third(.major), .third(.minor))
-    case .diminished: return (.third(.minor), .third(.minor))
-    case .augmented: return (.third(.major), .third(.major))
+    case .minor: return (minorThird, majorThird)
+    case .major: return (majorThird, minorThird)
+    case .diminished: return (minorThird, minorThird)
+    case .augmented: return (majorThird, majorThird)
     }
   }
 

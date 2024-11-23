@@ -18,6 +18,6 @@ struct HarmonicMajorTests {
 
 
   @Test func triads() {
-    #expect(scale.triads == [.major, .diminished, .minor, .minor, .major, .augmented, .diminished])
+    #expect(scale.degrees.flatMap { $0.triads } == [.major, .diminished, .minor, .minor, .major, .augmented, .diminished])
   }
 }

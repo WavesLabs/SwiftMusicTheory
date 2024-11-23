@@ -6,10 +6,14 @@ public enum Accidental: Sendable {
 
   public var symbol: String {
     switch self {
+    case .flattened(let times) where times == 2:
+      "𝄫"
     case .flattened(let times):
       "♭".repeating(times: times)
     case .natural:
       ""
+    case .sharpened(let times) where times == 2:
+      "𝄪"
     case .sharpened(let times):
       "♯".repeating(times: times)
     }

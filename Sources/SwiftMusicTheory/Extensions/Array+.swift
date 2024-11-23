@@ -30,11 +30,11 @@ public extension Array {
     _ = result.shift(by: amount, in: direction)
     return result
   }
-
+  
   // Shifts the array by specified amount of elements in HorizontalDirection and returns ArraySlice of shifted elements
   mutating func shift(by amount: Int, in direction: HorizontalDirection = .right) -> ArraySlice<Element> {
     var shifted: ArraySlice<Element>
-
+    
     switch direction {
     case .left:
       shifted = self.removeFirst(elementsCount: amount)
@@ -43,7 +43,7 @@ public extension Array {
       shifted = self.removeLast(elementsCount: amount)
       self.insert(contentsOf: shifted, at: 0)
     }
-
+    
     return shifted
   }
 }
@@ -54,10 +54,32 @@ public extension Array {
     removeFirst(elementsCount)
     return removed
   }
-
+  
   mutating func removeLast(elementsCount: Int) -> ArraySlice<Element> {
     let removed = self[(count - elementsCount)..<count]
     removeLast(elementsCount)
     return removed
+  }
+}
+
+public extension Array {
+  func batched(by batchSize: Int) -> [[Element]] {
+    guard batchSize > 0 else { return [self] }
+    var result: [[Element]] = []
+    var currentBatch: [Element] = []
+    
+    for element in self {
+      currentBatch.append(element)
+      if currentBatch.count == batchSize {
+        result.append(currentBatch)
+        currentBatch = []
+      }
+    }
+    
+    if !currentBatch.isEmpty {
+      result.append(currentBatch)
+    }
+    
+    return result
   }
 }

@@ -20,10 +20,16 @@ final class NoteTests {
     #expect(Note.e.sharp().diatonicEnharmonism(shifted: 1) == .f)
     #expect(Note.c.flat().diatonicEnharmonism(shifted: -1) == .b)
     #expect(Note.b.sharp().diatonicEnharmonism(shifted: 1) == .c)
+    
+    #expect(Note.c.flat().isEnharmonic(to: .b))
+    #expect(Note.f.flat().isEnharmonic(to: .e))
+    #expect(Note.e.sharp().isEnharmonic(to: .f))
+    #expect(Note.b.sharp().isEnharmonic(to: .c))
   }
 
   @Test(arguments: [
     (Note.c, 0),
+    (Note.b.sharp(), 0),
     (Note.c.sharp(), 1),
     (Note.d.flat(), 1),
     (Note.d, 2),
@@ -42,11 +48,10 @@ final class NoteTests {
     (Note.a.sharp(), 10),
     (Note.b.flat(), 10),
     (Note.b, 11),
-    (Note.b.sharp(), 12)
+    (Note.c.flat(), 11)
   ])
   func cMajorSemitonesCount(_ testCase: (Note, Int)) async throws {
-    let cMajorDiatonic = testCase.0.cMajorDiatonic
-    let semitonesCount = cMajorDiatonic.semitonesCount()
+    let semitonesCount = testCase.0.semitonesNormalized
     #expect(semitonesCount == testCase.1)
   }
 
@@ -54,7 +59,7 @@ final class NoteTests {
     let c: Note = .c
     let dFlat: Note = .d.flat()
 
-    #expect("\(c.sharp().sharp())" == "C♯♯")
+    #expect("\(c.sharp().sharp())" == "C𝄪")
     #expect("\(dFlat)" == "D♭")
     #expect("\(dFlat.sharp())" == "D")
   }

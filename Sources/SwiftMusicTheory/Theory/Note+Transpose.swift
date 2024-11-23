@@ -1,7 +1,16 @@
 extension Note {
+  
+  public func isEnharmonic(to note: Note) -> Bool {
+    note.semitonesNormalized == self.semitonesNormalized
+  }
+  
+  // TODO: What if semitones in note? Does not make sense Make a static function on Interval instead.
+  public var semitonesNormalized: Int {
+    (diatonicInterval.semitonesCount() + Interval.octave().semitonesCount()) % Interval.octave().semitonesCount()
+  }
 
   public func transposed(by interval: Interval, direction: VerticalDirection = .up) -> Note {
-    let cMajorRalativeFunction = Scale.diatonic.chromaticFunction(at: cMajorDiatonic + (direction == .up ? interval : interval.inverted))!
+    let cMajorRalativeFunction = Scale.diatonic.chromaticFunction(at: diatonicInterval + (direction == .up ? interval : interval.inverted))!
     return Note(from: cMajorRalativeFunction)
   }
 
@@ -10,7 +19,7 @@ extension Note {
     self.accidental = cMajorFunction.accidental
   }
 
-  public var cMajorDiatonic: Interval {
+  private var diatonicInterval: Interval {
     Scale.diatonic.degrees[name.rawValue].intervalFromRoot + accidental.interval
   }
 }
@@ -33,5 +42,15 @@ fileprivate extension Accidental {
     case .sharpened(let times):
         .unison(.augmented(times: times))
     }
+  }
+}
+
+extension Note {
+  public func sequence(length: Int, intervalToMove: Interval = .fifth()) -> [Note] {
+    var notes = [self]
+    for noteIndex in (1..<length) {
+      notes.append(notes[noteIndex-1] + intervalToMove)
+      }
+    return notes
   }
 }
