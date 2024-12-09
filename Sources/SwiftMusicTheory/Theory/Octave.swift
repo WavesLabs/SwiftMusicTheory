@@ -10,3 +10,9 @@ public enum Octave: Int, CaseIterable, Sendable {
   case fiveLine
   case sixLine
 }
+
+extension Octave: ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Int) {
+    self = Octave(rawValue: value) ?? .subcontra
+  }
+}

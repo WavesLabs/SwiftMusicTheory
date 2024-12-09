@@ -7,8 +7,8 @@ public struct Pitch: Sendable {
   public let cents: Int
 
   public init(
-    note: Note,
-    octave: Octave,
+    _ note: Note,
+    _ octave: Octave,
     cents: Int = 0
   ) {
     self.note = note
@@ -24,8 +24,6 @@ extension Pitch {
     String(note.notation) + String(octave.rawValue)
   }
 
-  public static let distanceReduction: CGFloat = pow(2, -(1.0 / Double(Interval.octave().semitonesCount())))
-
   // TODO: Implement me
 //  public func transposed(by interval: Interval) -> Pitch {
 //
@@ -34,6 +32,6 @@ extension Pitch {
 
 public extension Note {
   func octave(_ octave: Octave) -> Pitch {
-    Pitch(note: self, octave: octave)
+    Pitch(self, octave)
   }
 }
