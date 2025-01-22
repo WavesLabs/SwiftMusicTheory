@@ -2,7 +2,7 @@ import CoreFoundation
 
 public struct EqualTemperament: Temperament {
   
-  private let chromaticScale: [Note] = [.c, .d.flat(), .d, .e.flat(), .e, .f, .g.flat(), .g, .a.flat(), .a, .b.flat(), .b]
+  public let chromaticScale: [Note] = [.c, .d.flat(), .d, .e.flat(), .e, .f, .g.flat(), .g, .a.flat(), .a, .b.flat(), .b]
   
   public let distanceReduction: Double
   
@@ -21,14 +21,15 @@ public struct EqualTemperament: Temperament {
     self.distanceReduction = pow(2, -(1.0 / Double(octaveSubdivisions)))
   }
   
-  public func frequency(for pitch: Pitch) -> Double {
+  public func frequency(for pitch: Pitch) -> TemperedPitch {
     let octavesDistance = Double(pitch.octave.rawValue - relativePitch.octave.rawValue)
     let notesDistance = Double(pitch.note.semitonesNormalized - relativePitch.note.semitonesNormalized) / Double(octaveSubdivisions)
     let centsDistance = Double(pitch.cents - relativePitch.cents) / Double(octaveSubdivisions * 100)
-    return relativeFrequency * pow(2, octavesDistance + notesDistance + centsDistance)
+    let frequency = relativeFrequency * pow(2, octavesDistance + notesDistance + centsDistance)
+    return TemperedPitch(pitch: pitch, frequency: frequency)
   }
   
-  public func pitch(at frequency: Double) -> Pitch {
+  public func pitch(at frequency: Double) -> TemperedPitch {
     let distance = Double(octaveSubdivisions) * log2(frequency / relativeFrequency)
     
     let semitonesDistance = round(distance)
@@ -40,7 +41,8 @@ public struct EqualTemperament: Temperament {
     let resultingNote = chromaticScale[notesDistance % octaveSubdivisions]
     let resultingOctave = relativePitch.octave.rawValue + Int(octavesDistance)
     
-    return Pitch(resultingNote, Octave(integerLiteral: resultingOctave), cents: centsDistance)
+    let pitch = Pitch(resultingNote, Octave(integerLiteral: resultingOctave), cents: centsDistance)
+    return TemperedPitch(pitch: pitch, frequency: frequency)
   }
 }
 

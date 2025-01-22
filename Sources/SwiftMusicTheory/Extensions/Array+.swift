@@ -11,6 +11,14 @@ public enum VerticalDirection: Int {
 }
 
 public extension Array {
+  init(capacityToReserve: Int) {
+    var array = Array<Element>()
+    array.reserveCapacity(capacityToReserve)
+    self = array
+  }
+}
+
+public extension Array {
   subscript (cycled index: Index) -> Element {
     self[index % count]
   }
