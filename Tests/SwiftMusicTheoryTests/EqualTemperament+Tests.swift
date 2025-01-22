@@ -25,18 +25,18 @@ final class EqualTemperamentTests {
   ])
   func testFreqiencies(_ testCase: (Pitch, Double)) throws {
     #expect(
-      temperment.frequency(for: testCase.0).frequency.rounded(toDecimal: 3) == testCase.1.rounded(toDecimal: 3)
+      temperment.tone(for: testCase.0).frequency.rounded(toDecimal: 3) == testCase.1.rounded(toDecimal: 3)
     )
     
-    let pitch = temperment.pitch(at: testCase.1)
+    let tone = temperment.tone(at: testCase.1)
     #expect(
-      pitch.pitch.note.semitonesNormalized == testCase.0.note.semitonesNormalized
+      tone.pitch.note.semitonesNormalized == testCase.0.note.semitonesNormalized
     )
     #expect(
-      pitch.pitch.octave.rawValue == testCase.0.octave.rawValue
+      tone.pitch.octave.rawValue == testCase.0.octave.rawValue
     )
     #expect(
-      pitch.pitch.cents == testCase.0.cents
+      tone.pitch.cents == testCase.0.cents
     )
   }
 }

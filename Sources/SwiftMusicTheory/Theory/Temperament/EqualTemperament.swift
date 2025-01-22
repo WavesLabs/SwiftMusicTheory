@@ -21,15 +21,15 @@ public struct EqualTemperament: Temperament {
     self.distanceReduction = pow(2, -(1.0 / Double(octaveSubdivisions)))
   }
   
-  public func frequency(for pitch: Pitch) -> TemperedPitch {
+  public func tone(for pitch: Pitch) -> Tone {
     let octavesDistance = Double(pitch.octave.rawValue - relativePitch.octave.rawValue)
     let notesDistance = Double(pitch.note.semitonesNormalized - relativePitch.note.semitonesNormalized) / Double(octaveSubdivisions)
     let centsDistance = Double(pitch.cents - relativePitch.cents) / Double(octaveSubdivisions * 100)
     let frequency = relativeFrequency * pow(2, octavesDistance + notesDistance + centsDistance)
-    return TemperedPitch(pitch: pitch, frequency: frequency)
+    return Tone(pitch: pitch, frequency: frequency)
   }
   
-  public func pitch(at frequency: Double) -> TemperedPitch {
+  public func tone(at frequency: Double) -> Tone {
     let distance = Double(octaveSubdivisions) * log2(frequency / relativeFrequency)
     
     let semitonesDistance = round(distance)
@@ -42,7 +42,7 @@ public struct EqualTemperament: Temperament {
     let resultingOctave = relativePitch.octave.rawValue + Int(octavesDistance)
     
     let pitch = Pitch(resultingNote, Octave(integerLiteral: resultingOctave), cents: centsDistance)
-    return TemperedPitch(pitch: pitch, frequency: frequency)
+    return Tone(pitch: pitch, frequency: frequency)
   }
 }
 
