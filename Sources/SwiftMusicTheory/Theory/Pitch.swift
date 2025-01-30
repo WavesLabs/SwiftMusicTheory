@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public struct Pitch: Sendable {
+public struct Pitch: Sendable, Codable {
 
   public let note: Note
   public fileprivate(set) var octave: Octave
@@ -18,6 +18,19 @@ public struct Pitch: Sendable {
 }
 
 extension Pitch: Hashable { }
+
+extension Pitch: Comparable {
+  public static func < (lhs: Pitch, rhs: Pitch) -> Bool {
+    lhs.absoluteCents < rhs.absoluteCents
+  }
+  
+  var absoluteCents: Int {
+    let semitonesInOctave = octave.rawValue * Interval.octave().semitonesCount()
+    let semitonesWithinOctave = note.semitonesNormalized
+    let totalSemitones = semitonesInOctave + semitonesWithinOctave
+    return totalSemitones * 100 + cents
+  }
+}
 
 extension Pitch {
   public var scientificNotation: String {

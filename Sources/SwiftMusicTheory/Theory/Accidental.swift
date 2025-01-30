@@ -1,4 +1,4 @@
-public enum Accidental: Sendable {
+public enum Accidental: Sendable, Codable {
 
   case flattened(times: Int = 1)
   case natural

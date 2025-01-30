@@ -1,5 +1,5 @@
-public struct Note: Sendable {
-  public enum Name: Int, Sendable {
+public struct Note: Sendable, Codable {
+  public enum Name: Int, Sendable, Codable {
     case c
     case d
     case e

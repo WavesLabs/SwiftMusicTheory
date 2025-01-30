@@ -5,12 +5,15 @@ public struct StringInstrument: Sendable {
   public typealias Tuning = [Pitch]
 
   // MARK: Config
-  let fretsCount: Int
-  let positionMarkers = [0, 3, 5, 7, 9]
-  let temperament: Temperament
+  public let fretsCount: Int
+  public let positionMarkers = [0, 3, 5, 7, 9]
+  public let temperament: Temperament
   
-  let tuning: Tuning
-
+  public let tuning: Tuning
+  
+  public let minTone: Tone
+  public let maxTone: Tone
+  
   public init(
     tuning: Tuning = .standart6String,
     temperament: Temperament = EqualTemperament._12ET440,
@@ -19,6 +22,9 @@ public struct StringInstrument: Sendable {
     self.tuning = tuning
     self.fretsCount = fretsCount
     self.temperament = temperament
+    
+    self.minTone = tuning.map { temperament.tone(for: $0) }.min() ?? .stubTone
+    self.maxTone = tuning.map { temperament.tone(for: $0) }.max() ?? .stubTone
   }
   
   // TODO: Move to Pitch structure
@@ -28,6 +34,14 @@ public struct StringInstrument: Sendable {
     let octave = stringPitch.octave.rawValue + (stringPitch.note.semitonesNormalized + fret) / temperament.octaveSubdivisions
     return Pitch(note, Octave(integerLiteral: octave))
   }
+  
+  public var tonesRange: ClosedRange<Tone> {
+    minTone...maxTone
+  }
+}
+
+fileprivate extension Tone {
+  static var stubTone = Tone(pitch: Note.c.octave(.smallest), frequency: 1)
 }
 
 public extension StringInstrument.Tuning {
