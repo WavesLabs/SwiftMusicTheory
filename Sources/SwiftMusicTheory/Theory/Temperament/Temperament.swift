@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public protocol Temperament: Sendable {
+public protocol Temperament: Codable, Sendable, Hashable {
   
   var chromaticScale: [Note] { get }
   
@@ -21,5 +21,13 @@ extension Temperament {
       }
       .filter { $0 >= fromPitch && $0 <= toPitch }
       .map(tone)
-  } 
+  }
+  
+  public func pitch(from pitch: Pitch, shifted: Int) -> Pitch {
+    let resultNoteIndex = chromaticScale.firstIndex(where: { $0.isEnharmonic(to: pitch.note) })! + shifted
+    let note = chromaticScale[resultNoteIndex % octaveSubdivisions]
+    let octave = pitch.octave.rawValue + (resultNoteIndex / octaveSubdivisions)
+    
+    return Pitch(note, Octave(integerLiteral: octave))
+  }
 }

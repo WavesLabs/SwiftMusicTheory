@@ -1,4 +1,16 @@
-public struct StringInstrument: Sendable {
+public protocol MusicalInstrument: Codable, Sendable, Hashable {
+  
+  associatedtype Position
+  associatedtype Temperation: Temperament
+  
+  var temperament: Temperation { get }
+  
+  var tonesRange: ClosedRange<Tone> { get }
+  
+  func pitch(for: Position) -> Pitch
+}
+
+public struct StringInstrument: MusicalInstrument {
 
   public typealias Fret = Int
   public typealias String = Int
@@ -6,37 +18,34 @@ public struct StringInstrument: Sendable {
 
   // MARK: Config
   public let fretsCount: Int
-  public let positionMarkers = [0, 3, 5, 7, 9]
-  public let temperament: Temperament
+  public let temperament: EqualTemperament
   
   public let tuning: Tuning
   
-  public let minTone: Tone
-  public let maxTone: Tone
-  
   public init(
     tuning: Tuning = .standart6String,
-    temperament: Temperament = EqualTemperament._12ET440,
+    temperament: EqualTemperament = EqualTemperament._12ET440,
     fretsCount: Int = 24
   ) {
     self.tuning = tuning
     self.fretsCount = fretsCount
     self.temperament = temperament
-    
-    self.minTone = tuning.map { temperament.tone(for: $0) }.min() ?? .stubTone
-    self.maxTone = tuning.map { temperament.tone(for: $0) }.max() ?? .stubTone
   }
-  
-  // TODO: Move to Pitch structure
-  public func pitch(for string: StringInstrument.String, fret: Fret) -> Pitch {
-    let stringPitch = tuning[string - 1]
-    let note = temperament.chromaticScale[(stringPitch.note.semitonesNormalized + fret) % temperament.octaveSubdivisions]
-    let octave = stringPitch.octave.rawValue + (stringPitch.note.semitonesNormalized + fret) / temperament.octaveSubdivisions
-    return Pitch(note, Octave(integerLiteral: octave))
+
+  public func pitch(for position: (string: StringInstrument.String, fret: Fret)) -> Pitch {
+    temperament.pitch(from: tuning[position.string - 1], shifted: position.fret)
   }
   
   public var tonesRange: ClosedRange<Tone> {
     minTone...maxTone
+  }
+  
+  private var minTone: Tone {
+    temperament.tone(for: pitch(for: (string: tuning.count, fret: 0)))
+  }
+  
+  private var maxTone: Tone {
+    temperament.tone(for: pitch(for: (string: 1, fret: fretsCount)))
   }
 }
 

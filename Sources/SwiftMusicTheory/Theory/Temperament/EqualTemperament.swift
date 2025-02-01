@@ -2,7 +2,9 @@ import CoreFoundation
 
 public struct EqualTemperament: Temperament {
   
-  public let chromaticScale: [Note] = [.c, .d.flat(), .d, .e.flat(), .e, .f, .g.flat(), .g, .a.flat(), .a, .b.flat(), .b]
+  public var chromaticScale: [Note] {
+    [.c, .d.flat(), .d, .e.flat(), .e, .f, .g.flat(), .g, .a.flat(), .a, .b.flat(), .b]
+  }
   
   public let distanceReduction: Double
   
