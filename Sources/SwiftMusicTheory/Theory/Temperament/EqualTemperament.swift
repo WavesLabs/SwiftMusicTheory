@@ -2,6 +2,22 @@ import CoreFoundation
 
 public struct EqualTemperament: Temperament {
   
+  
+  enum CodingKeys: String, CodingKey {
+    case relativeFrequency
+    case relativePitch
+    case octaveSubdivisions
+  }
+  
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let relativeFrequency = try container.decode(Double.self, forKey: .relativeFrequency)
+    let relativePitch = try container.decode(Pitch.self, forKey: .relativePitch)
+    let octaveSubdivisions = try container.decode(Int.self, forKey: .octaveSubdivisions)
+    
+    self.init(relativeFrequency: relativeFrequency, relativePitch: relativePitch, octaveSubdivisions: octaveSubdivisions)
+  }
+  
   public var chromaticScale: [Note] {
     [.c, .d.flat(), .d, .e.flat(), .e, .f, .g.flat(), .g, .a.flat(), .a, .b.flat(), .b]
   }

@@ -91,3 +91,26 @@ public extension Array {
     return result
   }
 }
+
+public extension Array {
+  /// Returns the first index in the array where `predicate` returns `true`.
+  ///
+  /// This method assumes that if `predicate` returns `true` for an element, it will continue to return `true` for all subsequent elements.
+  ///
+  /// - Parameter predicate: A closure that returns `true` for elements that satisfy the condition.
+  /// - Returns: The index of the first element for which `predicate` returns `true`, or `count` if no such element is found.
+  func firstIndexBinarySearch(mathcing predicate: (Element) -> Bool) -> Int {
+    var low = 0
+    var high = count
+    
+    while low < high {
+      let mid = low + (high - low) / 2
+      if predicate(self[mid]) {
+        high = mid
+      } else {
+        low = mid + 1
+      }
+    }
+    return low
+  }
+}

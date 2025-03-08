@@ -1,5 +1,5 @@
 public struct Note: Sendable, Codable {
-  public enum Name: Int, Sendable, Codable {
+  public enum Name: Int, Sendable {
     case c
     case d
     case e
@@ -41,17 +41,17 @@ public extension Note {
     return result
   }
 
-  func sharp(_ times: Int = 1) -> Note {
+  func sharp(_ sharpsAmount: Int = 1) -> Note {
     Note(
       name: self.name,
-      accidental: Accidental(self.accidental.semitonesDifference + times)
+      accidental: Accidental(self.accidental.semitonesDifference + sharpsAmount)
     )
   }
 
-  func flat(_ times: Int = 1) -> Note {
+  func flat(_ flatsAmount: Int = 1) -> Note {
     Note(
       name: self.name,
-      accidental: Accidental(self.accidental.semitonesDifference - times)
+      accidental: Accidental(self.accidental.semitonesDifference - flatsAmount)
     )
   }
 }
@@ -82,3 +82,29 @@ fileprivate extension Note.Name {
 }
 
 extension Note: Equatable, Hashable { }
+
+extension Note.Name: Codable {
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.singleValueContainer()
+    try container.encode(title)
+  }
+  
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    let title = try container.decode(String.self)
+    switch title.lowercased() {
+    case "c": self = .c
+    case "d": self = .d
+    case "e": self = .e
+    case "f": self = .f
+    case "g": self = .g
+    case "a": self = .a
+    case "b": self = .b
+    default:
+      throw DecodingError.dataCorruptedError(
+        in: container,
+        debugDescription: "Invalid note name: \(title)"
+      )
+    }
+  }
+}

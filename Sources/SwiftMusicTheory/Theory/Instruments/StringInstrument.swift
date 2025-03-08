@@ -1,15 +1,3 @@
-public protocol MusicalInstrument: Codable, Sendable, Hashable {
-  
-  associatedtype Position
-  associatedtype Temperation: Temperament
-  
-  var temperament: Temperation { get }
-  
-  var tonesRange: ClosedRange<Tone> { get }
-  
-  func pitch(for: Position) -> Pitch
-}
-
 public struct StringInstrument: MusicalInstrument {
 
   public typealias Fret = Int
@@ -32,7 +20,7 @@ public struct StringInstrument: MusicalInstrument {
     self.temperament = temperament
   }
 
-  public func pitch(for position: (string: StringInstrument.String, fret: Fret)) -> Pitch {
+  public func pitch(at position: (string: StringInstrument.String, fret: Fret)) -> Pitch {
     temperament.pitch(from: tuning[position.string - 1], shifted: position.fret)
   }
   
@@ -41,11 +29,11 @@ public struct StringInstrument: MusicalInstrument {
   }
   
   private var minTone: Tone {
-    temperament.tone(for: pitch(for: (string: tuning.count, fret: 0)))
+    temperament.tone(for: pitch(at: (string: tuning.count, fret: 0)))
   }
   
   private var maxTone: Tone {
-    temperament.tone(for: pitch(for: (string: 1, fret: fretsCount)))
+    temperament.tone(for: pitch(at: (string: 1, fret: fretsCount)))
   }
 }
 
@@ -88,6 +76,12 @@ public extension StringInstrument.Tuning {
       Note.b.octave(.contra),
       Note.f.sharp().octave(.contra),
     ]
+  }
+  
+  static var dropE8String: StringInstrument.Tuning {
+    var dropD = standart8String
+    dropD[7] = Note.e.octave(.contra)
+    return dropD
   }
 
   static var dropD: StringInstrument.Tuning {
