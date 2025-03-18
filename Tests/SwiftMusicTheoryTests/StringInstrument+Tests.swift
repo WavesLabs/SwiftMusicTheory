@@ -67,7 +67,7 @@ final class StringInstrumentTests {
   ])
   func testFreqiencies(_ testCase: (string: StringInstrument.String, fret: StringInstrument.Fret, pitch: Pitch)) throws {
     
-    let testingPitch = guitar.pitch(at: testCase.string, fret: testCase.fret)
+    let testingPitch = guitar.pitch(at: (testCase.string, fret: testCase.fret))
     #expect(testingPitch.note == testCase.pitch.note)
     #expect(testingPitch.octave == testCase.pitch.octave)
   }

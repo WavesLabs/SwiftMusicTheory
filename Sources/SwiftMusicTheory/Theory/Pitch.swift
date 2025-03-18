@@ -32,7 +32,11 @@ extension Pitch: Comparable {
   }
 }
 
-extension Pitch {
+extension Pitch: CustomDebugStringConvertible {
+  public var debugDescription: String {
+    scientificNotation
+  }
+  
   public var scientificNotation: String {
     String(note.notation) + String(octave.rawValue)
   }
