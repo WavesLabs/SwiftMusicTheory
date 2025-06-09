@@ -21,14 +21,17 @@ extension Pitch: Hashable { }
 
 extension Pitch: Comparable {
   public static func < (lhs: Pitch, rhs: Pitch) -> Bool {
-    lhs.absoluteCents < rhs.absoluteCents
+    lhs.centsFromC0 < rhs.centsFromC0
   }
   
-  var absoluteCents: Int {
+  var semitonesFromC0: Int {
     let semitonesInOctave = octave.rawValue * Interval.octave().semitonesCount()
     let semitonesWithinOctave = note.semitonesNormalized
-    let totalSemitones = semitonesInOctave + semitonesWithinOctave
-    return totalSemitones * 100 + cents
+    return semitonesInOctave + semitonesWithinOctave
+  }
+  
+  var centsFromC0: Int {
+    return semitonesFromC0 * 100 + cents
   }
 }
 

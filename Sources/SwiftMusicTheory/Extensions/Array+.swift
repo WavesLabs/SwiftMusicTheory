@@ -98,10 +98,13 @@ public extension Array {
   /// This method assumes that if `predicate` returns `true` for an element, it will continue to return `true` for all subsequent elements.
   ///
   /// - Parameter predicate: A closure that returns `true` for elements that satisfy the condition.
-  /// - Returns: The index of the first element for which `predicate` returns `true`, or `count` if no such element is found.
-  func firstIndexBinarySearch(mathcing predicate: (Element) -> Bool) -> Int {
+  /// - Returns: The index of the first element for which `predicate` returns `true`, or `nil` if no such element is found.
+  func firstIndexBinarySearch(matching predicate: (Element) -> Bool) -> Int? {
     var low = 0
-    var high = count
+    var high = count - 1
+    
+    // Handle empty array case and check if last element does satisfy predicate
+    guard count > 0, predicate(self[high]) else { return nil }
     
     while low < high {
       let mid = low + (high - low) / 2
