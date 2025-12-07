@@ -18,6 +18,21 @@ public struct Note: Sendable, Codable {
   }
 }
 
+public extension Note.Name {
+  init?(_ string: String) {
+    switch string.lowercased() {
+    case "c": self = .c
+    case "d": self = .d
+    case "e": self = .e
+    case "f": self = .f
+    case "g": self = .g
+    case "a": self = .a
+    case "b": self = .b
+    default: return nil
+    }
+  }
+}
+
 public extension Note {
   static let c = Note(name: .c)
   static let d = Note(name: .d)

@@ -7,7 +7,34 @@ public enum HorizontalDirection: Int {
 
 public enum VerticalDirection: Int {
   case up = 1
+  case same = 0
   case down = -1
+  
+  
+  public init(from: Int, to: Int) {
+    guard to != from else {
+      self = .same
+      return
+    }
+    
+    self = to > from ? .up : .down
+  }
+  
+  public var oppsite: VerticalDirection {
+    switch self {
+    case .up: .down
+    case .same: .same
+    case .down: .up
+    }
+  }
+  
+  public func isTurningPoint(to next: Self) -> Bool {
+    guard self != .same, next != .same else {
+      return false
+    }
+    
+    return self == next.oppsite
+  }
 }
 
 public extension Array {

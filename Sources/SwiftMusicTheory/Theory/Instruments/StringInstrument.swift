@@ -1,3 +1,4 @@
+// TODO: Rename FrettedStringInstrument
 public struct StringInstrument: MusicalInstrument {
 
   public typealias Fret = Int
@@ -21,7 +22,7 @@ public struct StringInstrument: MusicalInstrument {
   }
 
   public func pitch(at position: (string: StringInstrument.String, fret: Fret)) -> Pitch {
-    temperament.pitch(from: tuning[position.string - 1], shifted: position.fret)
+    temperament.pitch(from: tuning[position.string - 1], shiftedBySubdivisions: position.fret)
   }
   
   public var tonesRange: ClosedRange<Tone> {
@@ -40,6 +41,8 @@ public struct StringInstrument: MusicalInstrument {
 fileprivate extension Tone {
   static var stubTone = Tone(pitch: Note.c.octave(.smallest), frequency: 1)
 }
+
+extension StringInstrument.String: Sendable { }
 
 public extension StringInstrument.Tuning {
   static var standart6String: StringInstrument.Tuning {
@@ -88,5 +91,24 @@ public extension StringInstrument.Tuning {
     var dropD = standart6String
     dropD[5] = Note.d.octave(.great)
     return dropD
+  }
+  
+  static var standard4StringBass: StringInstrument.Tuning {
+    [
+      Note.g.octave(.small),
+      Note.d.octave(.small),
+      Note.a.octave(.great),
+      Note.e.octave(.great)
+    ]
+  }
+  
+  static var standard5StringBass: StringInstrument.Tuning {
+    [
+      Note.g.octave(.small),
+      Note.d.octave(.small),
+      Note.a.octave(.great),
+      Note.e.octave(.great),
+      Note.b.octave(.contra)
+    ]
   }
 }
